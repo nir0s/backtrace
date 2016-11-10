@@ -24,7 +24,7 @@ Example:
 
 Hmm.. it's funny how I captured my lack of battery power.
 
-NOTE: Windows support coming soon!
+NOTE: Windows support coming soon! (Ordering will probably work on Windows. Coloring probably won't.)
 
 
 ## Alternatives
