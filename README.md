@@ -22,6 +22,8 @@ Example:
 
 ![](https://github.com/nir0s/backtrace/raw/master/img/main.png)
 
+Hmm.. it's funny how I captured my lack of battery power.
+
 NOTE: Windows support coming soon!
 
 
