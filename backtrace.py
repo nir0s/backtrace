@@ -61,7 +61,7 @@ class _Hook(object):
 
         for entry in entries:
             for index, field in enumerate(entry):
-                lengths[index] = max(lengths[index], len(str(entry[index])))
+                lengths[index] = max(lengths[index], len(str(field)))
         return lengths
 
 
