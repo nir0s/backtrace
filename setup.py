@@ -12,7 +12,7 @@ def read(*parts):
 
 setup(
     name='backtrace',
-    version="0.1.1",
+    version="0.1.2",
     url='https://github.com/nir0s/backtrace',
     author='nir0s',
     author_email='nir36g@gmail.com',
