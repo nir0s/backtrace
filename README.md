@@ -128,8 +128,6 @@ You can do all sorts of stuff like removing a certain field by setting the forma
 
 Coloring is powered by [colorama](https://github.com/tartley/colorama).
 
-I chose colors that made sense to me. At some point, i'll expose a nicer way of configuring those (for now just use the `*_format` arguments).
-
 
 ## Testing
 
