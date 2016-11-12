@@ -20,9 +20,7 @@ backtrace also allows to choose the formatting for each part of the traceback; s
 
 Example:
 
-![](https://github.com/nir0s/backtrace/raw/master/img/main.png)
-
-Hmm.. it's funny how I captured my lack of battery power.
+![Trump? REALLY?! What a nation of idiots!](https://github.com/nir0s/backtrace/raw/master/img/main.png)
 
 NOTE: Windows support coming soon! (Ordering will probably work on Windows. Coloring probably won't.)
 
@@ -72,10 +70,7 @@ backtrace.hook(
     strip_path=False,
     enable_on_envvar_only=False,
     on_tty=False,
-    line_format=None,
-    file_format=None,
-    context_format=None,
-    call_format=None)
+    styles={})
 
 # more code...
 
@@ -96,8 +91,37 @@ path. This is useful when you know you're running in the context of a single mod
 `ENABLE_BACKTRACE` is set, backtrace will be activated.
 * If `on_tty` is True, backtrace will be activated only if you're running
 in a real terminal (i.e. not piped, redirected, etc..). This can help keep the original traceback when logging to files or piping to look for information.
+* `styles` is a dictionary containing the styling for each part of the rebuilt traceback. See below:
 
-All `*_format` arguments allow for passing different formats for the different parts of each traceback entry and so overriding the defaults. This API is not currently well documented and might be expanded in the future.
+#### Styles
+
+Styles allow you to customize the coloring and structure of your new traceback. The defaults are:
+
+```python
+STYLES = {
+    'backtrace': Fore.YELLOW + '{0}',
+    'error': Fore.RED + Style.BRIGHT + '{0}',
+    'line': Fore.RED + Style.BRIGHT + '{0}',
+    'module': '{0}',
+    'context': Style.BRIGHT + Fore.GREEN + '{0}',
+    'call': Fore.YELLOW + ' --> ' + Style.BRIGHT + '{0}',
+}
+```
+
+Where:
+
+* `backtrace` is the main traceback message.
+* `error` is the error message presenting the exception message and its type.
+* `line` is the line number of each entry.
+* `module` is the calling module of each entry.
+* `context` is the calling function/method of each entry.
+* `call` is the called function/method/assignment of each entry.
+
+and the `{0}` format place holder is the actual value of the field.
+
+Sending a partial dictionary containing changes in only some parts of the traceback will have `backtrace` use the defaults for whatever wasn't specified.
+
+You can do all sorts of stuff like removing a certain field by setting the formatting of that field to an empty string; add more verbose identifiers to each field by appending an ID in front of it or just adding paranthese around a field.
 
 
 ## Coloring

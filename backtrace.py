@@ -9,6 +9,17 @@ from colorama import Fore, Style
 
 # TODO: Allow to enable backtrace by setting an environment variable.
 
+RESET = Style.RESET_ALL
+
+STYLES = {
+    'backtrace': Fore.YELLOW + '{0}',
+    'error': Fore.RED + Style.BRIGHT + '{0}',
+    'line': Fore.RED + Style.BRIGHT + '{0}',
+    'module': '{0}',
+    'context': Style.BRIGHT + Fore.GREEN + '{0}',
+    'call': Fore.YELLOW + ' --> ' + Style.BRIGHT + '{0}',
+}
+
 
 def _flush(message):
     sys.stderr.write(message + '\n')
@@ -21,42 +32,23 @@ class _Hook(object):
                  align=False,
                  strip_path=False):
         self.entries = entries
-        self._align = align
-        self._strip = strip_path
+        self.align = align
+        self.strip = strip_path
 
     def reverse(self):
         self.entries = self.entries[::-1]
 
-    def generate_backtrace(self,
-                           line_format=None,
-                           file_format=None,
-                           context_format=None,
-                           call_format=None):
-        line_format = line_format or (Fore.RED + Style.BRIGHT)
-        file_format = file_format or ''
-        context_format = context_format or (Style.BRIGHT + Fore.GREEN)
-        call_format = call_format or (Fore.YELLOW + ' --> ' + Style.BRIGHT)
+    def rebuild_entry(self, entry, styles):
+        module = basename(entry[0]) if self.strip else entry[0]
+        return (
+            styles['line'].format(str(entry[1])) + RESET,
+            styles['module'].format(module) + RESET,
+            styles['context'].format(entry[2]) + RESET,
+            styles['call'].format(entry[3]) + RESET
+        )
 
-        rebuilt_traceback = []
-        for entry in self.entries:
-            rebuilt_traceback.append((
-                line_format + str(entry[1]) + Style.RESET_ALL,
-                file_format + (basename(
-                    entry[0]) if self._strip else entry[0]) + Style.RESET_ALL,
-                context_format + entry[2] + Style.RESET_ALL,
-                call_format + entry[3] + Style.RESET_ALL))
-
-        lengths = self.set_alignment(rebuilt_traceback) if \
-            self._align else [1, 1, 1, 1]
-
-        backtrace_entries = []
-        for entry in rebuilt_traceback:
-            backtrace_entries.append(' '.join(
-                ['{0:{1}}'.format(field, lengths[index])
-                 for index, field in enumerate(entry)]))
-        return backtrace_entries
-
-    def set_alignment(self, entries):
+    @staticmethod
+    def align_all(entries):
         lengths = [0, 0, 0, 0]
 
         for entry in entries:
@@ -64,16 +56,32 @@ class _Hook(object):
                 lengths[index] = max(lengths[index], len(str(field)))
         return lengths
 
+    @staticmethod
+    def align_entry(entry, lengths):
+        return ' '.join(
+            ['{0:{1}}'.format(field, lengths[index])
+             for index, field in enumerate(entry)])
+
+    def generate_backtrace(self, styles):
+        backtrace = []
+        for entry in self.entries:
+            backtrace.append(self.rebuild_entry(entry, styles))
+
+        # Get the lenght of the longest string for each field of an entry
+        lengths = self.align_all(backtrace) if self.align else [1, 1, 1, 1]
+
+        aligned_backtrace = []
+        for entry in backtrace:
+            aligned_backtrace.append(self.align_entry(entry, lengths))
+        return aligned_backtrace
+
 
 def hook(reverse=False,
          align=False,
          strip_path=False,
          enable_on_envvar_only=False,
          on_tty=False,
-         line_format=None,
-         file_format=None,
-         context_format=None,
-         call_format=None):
+         styles=None):
     """Hook the current excepthook to the backtrace.
 
     If `align` is True, all parts (line numbers, file names, etc..) will be
@@ -88,10 +96,8 @@ def hook(reverse=False,
     If `on_tty` is True, backtrace will be activated only if you're running
     in a readl terminal (i.e. not piped, redirected, etc..).
 
-    `line_format` is a formatting for the line number.
-    `file_format` is a formatting for the file path.
-    `context_format` is a formatting for the calling function/module.
-    `call_format` is a formatting for the called function.
+    See https://github.com/nir0s/backtrace/blob/master/README.md for
+    information on `styles`.
     """
     if enable_on_envvar_only and 'ENABLE_BACKTRACE' not in os.environ:
         return
@@ -100,32 +106,35 @@ def hook(reverse=False,
     if on_tty and not isatty():
         return
 
+    if styles:
+        # TODO: When removing support for py26, change to dict comprehension
+        for k in STYLES.keys():
+            styles[k] = styles.get(k, STYLES[k])
+    else:
+        styles = STYLES
+
     colorama.init(autoreset=True)
 
     def backtrace_excepthook(tpe, value, tb):
         traceback_entries = traceback.extract_tb(tb)
-        hook = _Hook(traceback_entries, align=align, strip_path=strip_path)
+        hook = _Hook(
+            traceback_entries,
+            align=align,
+            strip_path=strip_path)
 
-        backtrace_message = '{0}Traceback ({1}):'.format(
-            Fore.YELLOW,
-            'Most recent call first' if reverse
-            else 'Most recent call last')
-        error_message = '{0}{1}{2}: {3}'.format(
-            Fore.RED,
-            Style.BRIGHT,
-            tpe.__name__,
-            str(value))
+        backtrace_message = styles['backtrace'].format(
+            'Traceback ({0}):'.format(
+                'Most recent call first' if reverse
+                else 'Most recent call last'))
+        error_message = styles['error'].format('{0}: {1}'.format(
+            tpe.__name__, str(value)))
 
         _flush(backtrace_message)
 
         if reverse:
             hook.reverse()
 
-        backtrace = hook.generate_backtrace(
-            line_format,
-            file_format,
-            context_format,
-            call_format)
+        backtrace = hook.generate_backtrace(styles)
         backtrace.insert(0 if reverse else len(backtrace), error_message)
         for entry in backtrace:
             _flush(entry)

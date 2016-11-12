@@ -12,7 +12,7 @@ backtrace.hook(
     align=True,
     strip_path=True,
     enable_on_envvar_only=False,
-    on_tty=True)
+    on_tty=True, styles={})
 
 
 class MyClass(object):
