@@ -63,6 +63,12 @@ class _Hook(object):
              for index, field in enumerate(entry)])
 
     def generate_backtrace(self, styles):
+        """Return the (potentially) aligned, rebuit traceback
+
+        Yes, we iterate over the entries thrice. We sacrifice
+        performance for code readability. I mean.. come on, how long can
+        your traceback be that it matters?
+        """
         backtrace = []
         for entry in self.entries:
             backtrace.append(self.rebuild_entry(entry, styles))
@@ -117,10 +123,7 @@ def hook(reverse=False,
 
     def backtrace_excepthook(tpe, value, tb):
         traceback_entries = traceback.extract_tb(tb)
-        hook = _Hook(
-            traceback_entries,
-            align=align,
-            strip_path=strip_path)
+        hook = _Hook(traceback_entries, align=align, strip_path=strip_path)
 
         backtrace_message = styles['backtrace'].format(
             'Traceback ({0}):'.format(
