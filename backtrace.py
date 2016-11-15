@@ -20,6 +20,15 @@ STYLES = {
     'call': Fore.YELLOW + ' --> ' + Style.BRIGHT + '{0}',
 }
 
+CONVERVATIVE_STYLES = {
+    'backtrace': Fore.YELLOW + '{0}',
+    'error': Fore.RED + Style.BRIGHT + '{0}',
+    'line': 'line ' + Fore.RED + Style.BRIGHT + '{0},',
+    'module': 'File {0},',
+    'context': 'in ' + Style.BRIGHT + Fore.GREEN + '{0}',
+    'call': Fore.YELLOW + '--> ' + Style.BRIGHT + '{0}',
+}
+
 
 def _flush(message):
     sys.stderr.write(message + '\n')
@@ -30,22 +39,33 @@ class _Hook(object):
     def __init__(self,
                  entries,
                  align=False,
-                 strip_path=False):
+                 strip_path=False,
+                 conservative=False):
         self.entries = entries
         self.align = align
         self.strip = strip_path
+        self.conservative = conservative
 
     def reverse(self):
         self.entries = self.entries[::-1]
 
     def rebuild_entry(self, entry, styles):
-        module = basename(entry[0]) if self.strip else entry[0]
-        return (
-            styles['line'].format(str(entry[1])) + RESET,
-            styles['module'].format(module) + RESET,
+        entry = list(entry)
+        # This is the file path.
+        entry[0] = basename(entry[0]) if self.strip else entry[0]
+        # Always an int (entry line number)
+        entry[1] = str(entry[1])
+
+        new_entry = [
+            styles['line'].format(entry[1]) + RESET,
+            styles['module'].format(entry[0]) + RESET,
             styles['context'].format(entry[2]) + RESET,
             styles['call'].format(entry[3]) + RESET
-        )
+        ]
+        if self.conservative:
+            new_entry[0], new_entry[1] = new_entry[1], new_entry[0]
+
+        return new_entry
 
     @staticmethod
     def align_all(entries):
@@ -87,6 +107,8 @@ def hook(reverse=False,
          strip_path=False,
          enable_on_envvar_only=False,
          on_tty=False,
+         conservative=False,
+         sorting=None,
          styles=None):
     """Hook the current excepthook to the backtrace.
 
@@ -112,7 +134,10 @@ def hook(reverse=False,
     if on_tty and not isatty():
         return
 
-    if styles:
+    if conservative:
+        styles = CONVERVATIVE_STYLES
+        align = align or False
+    elif styles:
         # TODO: When removing support for py26, change to dict comprehension
         for k in STYLES.keys():
             styles[k] = styles.get(k, STYLES[k])
@@ -123,7 +148,11 @@ def hook(reverse=False,
 
     def backtrace_excepthook(tpe, value, tb):
         traceback_entries = traceback.extract_tb(tb)
-        hook = _Hook(traceback_entries, align=align, strip_path=strip_path)
+        hook = _Hook(
+            traceback_entries,
+            align=align,
+            strip_path=strip_path,
+            conservative=conservative)
 
         backtrace_message = styles['backtrace'].format(
             'Traceback ({0}):'.format(
