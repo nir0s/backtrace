@@ -70,6 +70,7 @@ backtrace.hook(
     strip_path=False,
     enable_on_envvar_only=False,
     on_tty=False,
+    conservative=False,
     styles={})
 
 # more code...
@@ -92,7 +93,7 @@ path. This is useful when you know you're running in the context of a single mod
 * If `on_tty` is True, backtrace will be activated only if you're running
 in a real terminal (i.e. not piped, redirected, etc..). This can help keep the original traceback when logging to files or piping to look for information.
 * `styles` is a dictionary containing the styling for each part of the rebuilt traceback. See below:
-* If `Conservative` is true, a more conservative view will be provided for people who find the default backtrace style too new or intimidating. For example, no alignment will be done (unless `align` is explicitly passed) and potential unnecessary data will be retained. Try It! It's still eye-candy.
+* If `conservative` is true, a more conservative view will be provided for people who find the default backtrace style too new or intimidating. For example, no alignment will be done (unless `align` is explicitly passed), `styles` will be ignored, and potential unnecessary data will be retained. Try It! It's still eye-candy.
 
 #### Styles
 
