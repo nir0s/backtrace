@@ -11,7 +11,7 @@ backtrace.hook(
     reverse=False,
     align=True,
     strip_path=True,
-    enable_on_envvar_only=False,
+    enable_on_envvar_only=False, conservative=True,
     on_tty=True, styles={})
 
 
