@@ -1,4 +1,4 @@
-def _func2():
+def moose_bites_kan_be_pretty_nasti():
     try:
         filename = 'certainly_a_non_existing_path'
         with open(filename) as f:
@@ -7,12 +7,16 @@ def _func2():
               'crazy.'.format(filename))
         raise RuntimeError('just an error')
     except IOError as ex:
-        other_func(ex)
+        moose_func(ex)
 
 
-def other_func(ex):
-    raise raise_func(ex)
+def moose_func(ex):
+    raise raise_moose(ex)
 
 
-def raise_func(ex):
-    raise RuntimeError(ex)
+def raise_moose(ex):
+    raise MooseError(ex)
+
+
+class MooseError(Exception):
+    pass

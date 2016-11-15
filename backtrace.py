@@ -108,7 +108,6 @@ def hook(reverse=False,
          enable_on_envvar_only=False,
          on_tty=False,
          conservative=False,
-         sorting=None,
          styles=None):
     """Hook the current excepthook to the backtrace.
 
@@ -124,6 +123,10 @@ def hook(reverse=False,
     If `on_tty` is True, backtrace will be activated only if you're running
     in a readl terminal (i.e. not piped, redirected, etc..).
 
+    If `convervative` is True, the traceback will have more seemingly original
+    style (There will be no alignment by default, 'File', 'line' and 'in'
+    prefixes and will ignore any styling provided by the user.)
+
     See https://github.com/nir0s/backtrace/blob/master/README.md for
     information on `styles`.
     """
@@ -134,11 +137,11 @@ def hook(reverse=False,
     if on_tty and not isatty():
         return
 
+    styles = styles or {}
     if conservative:
         styles = CONVERVATIVE_STYLES
         align = align or False
     elif styles:
-        # TODO: When removing support for py26, change to dict comprehension
         for k in STYLES.keys():
             styles[k] = styles.get(k, STYLES[k])
     else:
@@ -148,26 +151,18 @@ def hook(reverse=False,
 
     def backtrace_excepthook(tpe, value, tb):
         traceback_entries = traceback.extract_tb(tb)
-        hook = _Hook(
-            traceback_entries,
-            align=align,
-            strip_path=strip_path,
-            conservative=conservative)
+        hook = _Hook(traceback_entries, align, strip_path, conservative)
 
-        backtrace_message = styles['backtrace'].format(
-            'Traceback ({0}):'.format(
-                'Most recent call first' if reverse
-                else 'Most recent call last'))
-        error_message = styles['error'].format('{0}: {1}'.format(
-            tpe.__name__, str(value)))
-
-        _flush(backtrace_message)
+        tb_message = styles['backtrace'].format('Traceback ({0}):'.format(
+            'Most recent call ' + 'first' if reverse else 'last'))
+        err_message = styles['error'].format(tpe.__name__ + ': ' + str(value))
 
         if reverse:
             hook.reverse()
 
+        _flush(tb_message)
         backtrace = hook.generate_backtrace(styles)
-        backtrace.insert(0 if reverse else len(backtrace), error_message)
+        backtrace.insert(0 if reverse else len(backtrace), err_message)
         for entry in backtrace:
             _flush(entry)
 
