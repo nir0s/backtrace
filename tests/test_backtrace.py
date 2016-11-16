@@ -12,22 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import shlex
-
 import pytest
-import click.testing as clicktest
 
 import backtrace
-
-
-def _invoke(command):
-    cli = clicktest.CliRunner()
-
-    lexed_command = command if isinstance(command, list) \
-        else shlex.split(command)
-    func = lexed_command[0]
-    params = lexed_command[1:]
-    return cli.invoke(getattr(backtrace, func), params)
 
 
 class TestGeneral:
