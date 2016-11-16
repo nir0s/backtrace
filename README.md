@@ -33,7 +33,7 @@ NOTE: Didn't test this on Windows yet. Should work.. but don't know how well.
 
 ## Installation
 
-backtrace supports Linux and OSX on Python 2.6, 2.7 and 3.4+
+backtrace officially supports Linux and OSX on Python 2.7 and 3.4+. Python 2.6 will also probably work, but with no guarantees.
 
 ```shell
 pip install backtrace
