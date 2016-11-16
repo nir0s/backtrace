@@ -16,13 +16,13 @@ WIP! Untested!
 backtrace manipulates Python tracebacks to make them more readable.
 It provides different configuration options for coloring and formatting.
 
-backtrace also allows to choose the formatting for each part of the traceback; show the traceback entries in reversed order, and more..
+backtrace also allows to choose the formatting of each part of the traceback; show the traceback entries in reversed order, and more..
 
 Example:
 
 ![Trump? REALLY?! What a nation of idiots!](https://github.com/nir0s/backtrace/raw/master/img/main.png)
 
-NOTE: Windows support coming soon! (Ordering will probably work on Windows. Coloring probably won't.)
+NOTE: Didn't test this on Windows yet. Should work.. but don't know how well.
 
 
 ## Alternatives

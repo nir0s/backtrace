@@ -1,8 +1,3 @@
-# SOON!
-# You should run this like so: `python test.py | backtrace`
-# backtrace.py should capture stdin from the pipe and parse it,
-# after which it should print it nicely.
-
 import test2
 import backtrace
 
@@ -11,8 +6,10 @@ backtrace.hook(
     reverse=False,
     align=True,
     strip_path=True,
-    enable_on_envvar_only=False, conservative=False,
-    on_tty=True, styles={})
+    enable_on_envvar_only=False,
+    on_tty=False,
+    conservative=False,
+    styles={})
 
 
 class Moose(object):
@@ -22,90 +19,91 @@ class Moose(object):
     def a_moose_once_bit_my_sister(self):
         _mynd_you()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
+# pointless comment. Flake8 is driving me crazy
 
 
 def _mynd_you():

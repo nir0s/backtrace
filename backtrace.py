@@ -1,15 +1,10 @@
 import os
 import sys
 import traceback
-from os.path import basename
 
 import colorama
 from colorama import Fore, Style
 
-
-# TODO: Allow to enable backtrace by setting an environment variable.
-
-RESET = Style.RESET_ALL
 
 STYLES = {
     'backtrace': Fore.YELLOW + '{0}',
@@ -17,7 +12,7 @@ STYLES = {
     'line': Fore.RED + Style.BRIGHT + '{0}',
     'module': '{0}',
     'context': Style.BRIGHT + Fore.GREEN + '{0}',
-    'call': Fore.YELLOW + ' --> ' + Style.BRIGHT + '{0}',
+    'call': Fore.YELLOW + '--> ' + Style.BRIGHT + '{0}',
 }
 
 CONVERVATIVE_STYLES = {
@@ -52,15 +47,15 @@ class _Hook(object):
     def rebuild_entry(self, entry, styles):
         entry = list(entry)
         # This is the file path.
-        entry[0] = basename(entry[0]) if self.strip else entry[0]
+        entry[0] = os.path.basename(entry[0]) if self.strip else entry[0]
         # Always an int (entry line number)
         entry[1] = str(entry[1])
 
         new_entry = [
-            styles['line'].format(entry[1]) + RESET,
-            styles['module'].format(entry[0]) + RESET,
-            styles['context'].format(entry[2]) + RESET,
-            styles['call'].format(entry[3]) + RESET
+            styles['line'].format(entry[1]) + Style.RESET_ALL,
+            styles['module'].format(entry[0]) + Style.RESET_ALL,
+            styles['context'].format(entry[2]) + Style.RESET_ALL,
+            styles['call'].format(entry[3]) + Style.RESET_ALL
         ]
         if self.conservative:
             new_entry[0], new_entry[1] = new_entry[1], new_entry[0]
@@ -137,7 +132,6 @@ def hook(reverse=False,
     if on_tty and not isatty():
         return
 
-    styles = styles or {}
     if conservative:
         styles = CONVERVATIVE_STYLES
         align = align or False
@@ -147,6 +141,7 @@ def hook(reverse=False,
     else:
         styles = STYLES
 
+    # For Windows
     colorama.init(autoreset=True)
 
     def backtrace_excepthook(tpe, value, tb):
