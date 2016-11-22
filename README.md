@@ -85,15 +85,15 @@ You can pass the following flags to `hook` to change backtrace's behavior:
 
 * If `reverse` is True, the traceback entries will be printed in reverse order.
 * If `align` is True, all parts (line numbers, file names, etc..) will be
-aligned to the left according to the longest entry. This allow for extended readability as you eyes don't have to move between columns to understand what's going on.
+aligned to the left according to the longest entry. This allows for extended readability as your eyes don't have to move between columns to understand what's going on.
 * If `strip_path` is True, only the file name will be shown, not its full
 path. This is useful when you know you're running in the context of a single module or a single package containing only a root folder so you only need file names. This can help keep the traceback clean.
 * If `enable_on_envvar_only` is True, only if the environment variable
 `ENABLE_BACKTRACE` is set, backtrace will be activated.
 * If `on_tty` is True, backtrace will be activated only if you're running
 in a real terminal (i.e. not piped, redirected, etc..). This can help keep the original traceback when logging to files or piping to look for information.
-* `styles` is a dictionary containing the styling for each part of the rebuilt traceback. See below:
-* If `conservative` is true, a more conservative view will be provided for people who find the default backtrace style too new or intimidating. For example, no alignment will be done (unless `align` is explicitly passed), `styles` will be ignored, and potential unnecessary data will be retained. Try It! It's still eye-candy.
+* `styles` is a dictionary containing the styling for each part of the rebuilt traceback. See below.
+* If `conservative` is true, a more conservative format will be provided for people who find the default backtrace style too new or intimidating. For example, no alignment will be done (unless `align` is explicitly passed), `styles` will be ignored, and potential unnecessary data will be retained. Try It! It's still eye-candy.
 
 #### Styles
 
@@ -106,7 +106,7 @@ STYLES = {
     'line': Fore.RED + Style.BRIGHT + '{0}',
     'module': '{0}',
     'context': Style.BRIGHT + Fore.GREEN + '{0}',
-    'call': Fore.YELLOW + ' --> ' + Style.BRIGHT + '{0}',
+    'call': Fore.YELLOW + '--> ' + Style.BRIGHT + '{0}',
 }
 ```
 
