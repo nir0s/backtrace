@@ -88,7 +88,7 @@ class _Hook(object):
         for entry in self.entries:
             backtrace.append(self.rebuild_entry(entry, styles))
 
-        # Get the lenght of the longest string for each field of an entry
+        # Get the length of the longest string for each field of an entry
         lengths = self.align_all(backtrace) if self.align else [1, 1, 1, 1]
 
         aligned_backtrace = []
@@ -107,7 +107,7 @@ def hook(reverse=False,
     """Hook the current excepthook to the backtrace.
 
     If `align` is True, all parts (line numbers, file names, etc..) will be
-    aligned to the left according to the longest entry.
+    aligned to the left according to the longest string in each entry.
 
     If `strip_path` is True, only the file name will be shown, not its full
     path.
@@ -116,11 +116,12 @@ def hook(reverse=False,
     `ENABLE_BACKTRACE` is set, backtrace will be activated.
 
     If `on_tty` is True, backtrace will be activated only if you're running
-    in a readl terminal (i.e. not piped, redirected, etc..).
+    in a real terminal (i.e. not piped, redirected, etc..).
 
-    If `convervative` is True, the traceback will have more seemingly original
-    style (There will be no alignment by default, 'File', 'line' and 'in'
-    prefixes and will ignore any styling provided by the user.)
+    If `conservative` is True, the traceback will have a more seemingly
+    original style (There will be no alignment by default, 'File', 'line' and
+    'in' prefixes will be added and any styling provided by the user will be
+    ignored.)
 
     See https://github.com/nir0s/backtrace/blob/master/README.md for
     information on `styles`.
@@ -145,8 +146,8 @@ def hook(reverse=False,
     colorama.init(autoreset=True)
 
     def backtrace_excepthook(tpe, value, tb):
-        traceback_entries = traceback.extract_tb(tb)
-        hook = _Hook(traceback_entries, align, strip_path, conservative)
+        tb_entries = traceback.extract_tb(tb)
+        hook = _Hook(tb_entries, align, strip_path, conservative)
 
         tb_message = styles['backtrace'].format('Traceback ({0}):'.format(
             'Most recent call ' + 'first' if reverse else 'last'))
@@ -155,8 +156,9 @@ def hook(reverse=False,
         if reverse:
             hook.reverse()
 
-        _flush(tb_message)
         backtrace = hook.generate_backtrace(styles)
+
+        _flush(tb_message)
         backtrace.insert(0 if reverse else len(backtrace), err_message)
         for entry in backtrace:
             _flush(entry)
