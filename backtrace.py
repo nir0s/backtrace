@@ -1,11 +1,19 @@
 import os
 import sys
+import argparse
 import traceback
 
 import colorama
 from colorama import Fore, Style
 
 
+DESCRIPTION = """Beautify Tracebacks.
+
+Just pipe stderr into backtrace like so:
+  `python bad-program.py 2>&1 | backtrace`
+"""
+
+TRACEBACK_IDENTIFIER = 'Traceback (most recent call last):\n'
 STYLES = {
     'backtrace': Fore.YELLOW + '{0}',
     'error': Fore.RED + Style.BRIGHT + '{0}',
@@ -103,7 +111,10 @@ def hook(reverse=False,
          enable_on_envvar_only=False,
          on_tty=False,
          conservative=False,
-         styles=None):
+         styles=None,
+         tb=None,
+         tpe=None,
+         value=None):
     """Hook the current excepthook to the backtrace.
 
     If `align` is True, all parts (line numbers, file names, etc..) will be
@@ -144,27 +155,147 @@ def hook(reverse=False,
     # For Windows
     colorama.init(autoreset=True)
 
-    def backtrace_excepthook(tpe, value, tb):
-        traceback_entries = traceback.extract_tb(tb)
-        hook = _Hook(traceback_entries, align, strip_path, conservative)
+    def backtrace_excepthook(tpe, value, tb=None):
+        # Don't know if we're getting traceback or traceback entries.
+        # We'll try to parse a traceback object.
+        try:
+            traceback_entries = traceback.extract_tb(tb)
+        except AttributeError:
+            traceback_entries = tb
+        parser = _Hook(traceback_entries, align, strip_path, conservative)
 
+        tpe = tpe if isinstance(tpe, str) else tpe.__name__
         tb_message = styles['backtrace'].format('Traceback ({0}):'.format(
-            'Most recent call ' + 'first' if reverse else 'last'))
-        err_message = styles['error'].format(tpe.__name__ + ': ' + str(value))
+            'Most recent call ' + ('first' if reverse else 'last')))
+        err_message = styles['error'].format(tpe + ': ' + str(value))
 
         if reverse:
-            hook.reverse()
+            parser.reverse()
 
         _flush(tb_message)
-        backtrace = hook.generate_backtrace(styles)
+        backtrace = parser.generate_backtrace(styles)
         backtrace.insert(0 if reverse else len(backtrace), err_message)
         for entry in backtrace:
             _flush(entry)
 
-    sys.excepthook = backtrace_excepthook
+    if tb:
+        backtrace_excepthook(tpe=tpe, value=value, tb=tb)
+    else:
+        sys.excepthook = backtrace_excepthook
 
 
 def unhook():
     """Restore the default excepthook
     """
     sys.excepthook = sys.__excepthook__
+
+
+def _extract_traceback(text):
+    capture = False
+    entries = []
+    all_else = []
+
+    for index, line in enumerate(text):
+        if TRACEBACK_IDENTIFIER in line:
+            capture = True
+        elif capture and line.startswith(' '):
+            if index % 2 == 0:
+                line = line.strip().strip('\n')
+                next_line = text[index + 1].strip('\n')
+                entries.append(line + ', ' + next_line)
+        elif capture:
+            entries.append(line)
+            break
+        else:
+            all_else.append(line)
+
+    traceback_entries = []
+
+    for index, line in enumerate(entries[:-2]):
+        # TODO: This should be done in a _parse_entry function
+        element = line.split(',')
+        element[0] = element[0].strip().lstrip('File').strip(' "')
+        element[1] = element[1].strip().lstrip('line').strip()
+        element[2] = element[2].strip().lstrip('in').strip()
+        traceback_entries.append(tuple(element))
+    return traceback_entries, all_else
+
+
+def _stdin_hook(args):
+    output = sys.stdin.readlines()
+
+    if TRACEBACK_IDENTIFIER not in output:
+        sys.exit(
+            'No Traceback detected. Make sure you pipe stderr to '
+            'backtrace correctly.')
+
+    tb, all_else = _extract_traceback(output)
+    sys.stdout.write(''.join(all_else))
+    tpe, value = output[-1].strip('\n').split(': ', 1)
+    hook(
+        reverse=args.reverse,
+        align=args.align,
+        strip_path=args.strip_path,
+        conservative=args.conservative,
+        tpe=tpe,
+        value=value,
+        tb=tb
+    )
+
+
+def _add_reverse_argument(parser):
+    parser.add_argument(
+        '-r',
+        '--reverse',
+        action='store_true',
+        help='Reverse traceback entry order')
+    return parser
+
+
+def _add_align_argument(parser):
+    parser.add_argument(
+        '-a',
+        '--align',
+        action='store_true',
+        help='Right-align the backtrace')
+    return parser
+
+
+def _add_strip_path_argument(parser):
+    parser.add_argument(
+        '-s',
+        '--strip-path',
+        action='store_true',
+        help='Strip the path to the module')
+    return parser
+
+
+def _add_conservative_argument(parser):
+    parser.add_argument(
+        '-c',
+        '--conservative',
+        action='store_true',
+        help='Activate conservative mode')
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=DESCRIPTION,
+        formatter_class=argparse.RawTextHelpFormatter)
+    parser = _add_reverse_argument(parser)
+    parser = _add_align_argument(parser)
+    parser = _add_strip_path_argument(parser)
+    parser = _add_conservative_argument(parser)
+    parser.set_defaults(func=_stdin_hook)
+
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    args.func(args)
+
+
+if __name__ == '__main__':
+    main()
