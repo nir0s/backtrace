@@ -12,7 +12,7 @@ def read(*parts):
 
 setup(
     name='backtrace',
-    version="0.1.3",
+    version="0.2.0",
     url='https://github.com/nir0s/backtrace',
     author='nir0s',
     author_email='nir36g@gmail.com',
@@ -21,6 +21,7 @@ setup(
     description='Makes tracebacks humanly readable',
     long_description=read('README.rst'),
     py_modules=['backtrace'],
+    entry_points={'console_scripts': ['backtrace = backtrace:main']},
     install_requires=[
         "colorama==0.3.7",
     ],

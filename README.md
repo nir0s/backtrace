@@ -55,8 +55,27 @@ backtrace provides two methods for manipulating your tracebacks.
 
 ### Piping
 
-```bash
-$ python my-program.py | backtrace # Soon...
+You can pipe stderr into backtrace which will try to detect a traceback, parse it and display a beautified trace.
+
+```text
+$ backtrace -h
+usage: backtrace [-h] [-r] [-a] [-s] [-c]
+
+Beautify Tracebacks.
+
+Just pipe stderr into backtrace like so:
+  `python bad-program.py 2>&1 | backtrace`
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -r, --reverse       Reverse traceback entry order
+  -a, --align         Right-align the backtrace
+  -s, --strip-path    Strip the path to the module
+  -c, --conservative  Activate conservative mode
+
+$ python my-traceback-generating-program.py 2>&1 | backtrace
+...
+
 ```
 
 ### Inside your application

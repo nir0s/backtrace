@@ -2,14 +2,14 @@ import test2
 import backtrace
 
 
-backtrace.hook(
-    reverse=False,
-    align=True,
-    strip_path=True,
-    enable_on_envvar_only=False,
-    on_tty=False,
-    conservative=False,
-    styles={})
+# backtrace.hook(
+#     reverse=False,
+#     align=True,
+#     strip_path=True,
+#     enable_on_envvar_only=False,
+#     on_tty=False,
+#     conservative=False,
+#     styles={})
 
 
 class Moose(object):
@@ -111,4 +111,5 @@ def _mynd_you():
 
 
 if __name__ == '__main__':
+    print('BEFORE TRACEBACK')
     i = Moose()
