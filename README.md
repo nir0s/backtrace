@@ -18,9 +18,15 @@ It provides different configuration options for coloring and formatting.
 
 backtrace also allows to choose the formatting of each part of the traceback; show the traceback entries in reversed order, and more..
 
-Example:
+Examples:
 
-![Trump? REALLY?! What a nation of idiots!](https://github.com/nir0s/backtrace/raw/master/img/main.png)
+When piping to backtrace:
+
+![Trump? REALLY?! What a nation of idiots!](https://github.com/nir0s/backtrace/raw/master/img/piping.png)
+
+When using the API directly from Python:
+
+![Trump? REALLY?! What a nation of idiots!](https://github.com/nir0s/backtrace/raw/master/img/api.png)
 
 NOTE: Didn't test this on Windows yet. Should work.. but don't know how well.
 
