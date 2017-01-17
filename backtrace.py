@@ -222,12 +222,17 @@ def _extract_traceback(text):
 
 
 def _stdin_hook(args):
-    output = sys.stdin.readlines()
+    if not sys.stdin.isatty():
+        output = sys.stdin.readlines()
+    else:
+        sys.exit(
+            'No input provided. Make sure you pipe stderr into '
+            'backtrace.')
 
     if TRACEBACK_IDENTIFIER not in output:
         sys.exit(
             'No Traceback detected. Make sure you pipe stderr to '
-            'backtrace correctly.')
+            'backtrace.')
 
     tb, all_else = _extract_traceback(output)
     sys.stdout.write(''.join(all_else))
