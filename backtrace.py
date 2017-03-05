@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import argparse
 import traceback
 
@@ -104,6 +105,24 @@ class _Hook(object):
             aligned_backtrace.append(self.align_entry(entry, lengths))
         return aligned_backtrace
 
+    def generate_json(self):
+        backtrace = {
+            'error_message': '',
+            'error_type': '',
+            'entries': [],
+        }
+
+        for entry in self.entries:
+            backtrace['entries'].append(
+                dict(
+                    module=entry[0],
+                    line=entry[1],
+                    context=entry[2],
+                    call=entry[3]
+                )
+            )
+        return backtrace
+
 
 def hook(reverse=False,
          align=False,
@@ -111,6 +130,7 @@ def hook(reverse=False,
          enable_on_envvar_only=False,
          on_tty=False,
          conservative=False,
+         json_output=False,
          styles=None,
          tb=None,
          tpe=None,
@@ -173,10 +193,16 @@ def hook(reverse=False,
             parser.reverse()
 
         _flush(tb_message)
-        backtrace = parser.generate_backtrace(styles)
-        backtrace.insert(0 if reverse else len(backtrace), err_message)
-        for entry in backtrace:
-            _flush(entry)
+        if json_output:
+            backtrace = parser.generate_json()
+            backtrace['error_message'] = value
+            backtrace['error_type'] = tpe
+            _flush(json.dumps(backtrace, indent=4, sort_keys=False))
+        else:
+            backtrace = parser.generate_backtrace(styles)
+            backtrace.insert(0 if reverse else len(backtrace), err_message)
+            for entry in backtrace:
+                _flush(entry)
 
     if tb:
         backtrace_excepthook(tpe=tpe, value=value, tb=tb)
@@ -237,6 +263,7 @@ def _stdin_hook(args):
         align=args.align,
         strip_path=args.strip_path,
         conservative=args.conservative,
+        json_output=args.json,
         tpe=tpe,
         value=value,
         tb=tb
@@ -279,6 +306,15 @@ def _add_conservative_argument(parser):
     return parser
 
 
+def _add_json_output_argument(parser):
+    parser.add_argument(
+        '-j',
+        '--json',
+        action='store_true',
+        help='Output in JSON format')
+    return parser
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description=DESCRIPTION,
@@ -287,6 +323,7 @@ def parse_args():
     parser = _add_align_argument(parser)
     parser = _add_strip_path_argument(parser)
     parser = _add_conservative_argument(parser)
+    parser = _add_json_output_argument(parser)
     parser.set_defaults(func=_stdin_hook)
 
     return parser.parse_args()
