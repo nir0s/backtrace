@@ -56,8 +56,13 @@ pip install https://github.com/nir0s/backtrace/archive/master.tar.gz
 
 backtrace provides two methods for manipulating your tracebacks.
 
+* Calling it as a python module
 * Piping to backtrace using its CLI
 * Using backtrace from within your code
+
+### As a python module
+
+`python -m backtrace my-traceback-generating-program.py`
 
 ### Piping
 
