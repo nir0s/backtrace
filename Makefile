@@ -15,6 +15,10 @@
 # Name of this package
 PACKAGENAME = backtrace
 
+# Default tox env when running `make testone`
+TOX_ENV ?= py36
+
+
 .PHONY: help
 help:
 	@echo 'Please use "make <target>" where <target> is one of'
@@ -22,12 +26,45 @@ help:
 	@echo "  dev       - prepare a development environment (includes tests)"
 	@echo "  instdev   - prepare a development environment (no tests)"
 	@echo "  install   - install into current Python environment"
+	@echo "  build     - build the package"
 	@echo "  test      - test from this directory using tox, including test coverage"
 	@echo "  publish   - upload to PyPI"
 	@echo "  clean     - remove any temporary build products"
+	@echo "  dry-run   - perform all action required for a release without actually releasing"
 
 .PHONY: release
-release: publish
+release: test clean build publish
+	@echo "$@ done."
+
+.PHONY: test
+test:
+	pip install 'tox>=1.7.2'
+	tox
+	@echo "$@ done."
+
+.PHONY: testone
+testone:
+	pip install 'tox>=1.7.2'
+	tox -e $(TOX_ENV)
+	@echo "$@ done."
+
+.PHONY: clean
+clean:
+	rm -rf dist build $(PACKAGENAME).egg-info
+	@echo "$@ done."
+
+.PHONY: build
+build:
+	python setup.py sdist bdist_wheel
+
+.PHONY: publish
+publish:
+	pip install twine
+	twine upload -r pypi dist/$(PACKAGENAME)-*
+	@echo "$@ done."
+
+.PHONY: dry-run
+dry-run: test clean build
 	@echo "$@ done."
 
 .PHONY: dev
@@ -43,20 +80,4 @@ instdev:
 .PHONY: install
 install:
 	python setup.py install
-	@echo "$@ done."
-
-.PHONY: test
-test:
-	sudo pip install 'tox>=1.7.2'
-	tox
-	@echo "$@ done."
-
-.PHONY: publish
-publish:
-	python setup.py sdist upload
-	@echo "$@ done; uploaded the package to PyPI."
-
-.PHONY: clean
-clean:
-	rm -rf build $(PACKAGENAME).egg-info
 	@echo "$@ done."
