@@ -12,7 +12,7 @@ def read(*parts):
 
 setup(
     name='backtrace',
-    version="0.2.0",
+    version="0.2.1",
     url='https://github.com/nir0s/backtrace',
     author='nir0s',
     author_email='nir36g@gmail.com',
@@ -30,6 +30,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Natural Language :: English',
         'Environment :: Console',
         'Intended Audience :: Developers',
