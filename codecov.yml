@@ -3,7 +3,7 @@ coverage:
     status:
         patch:
             default:
-                target: '95'
+                target: '10'
         project:
             default:
-                target: '95'
+                target: '10'
