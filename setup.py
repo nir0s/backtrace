@@ -23,7 +23,7 @@ setup(
     py_modules=['backtrace'],
     entry_points={'console_scripts': ['backtrace = backtrace:main']},
     install_requires=[
-        "colorama==0.3.7",
+        "colorama>=0.3.7",
     ],
     classifiers=[
         'Programming Language :: Python',
