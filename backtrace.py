@@ -166,8 +166,10 @@ def hook(reverse=False,
 
         tpe = tpe if isinstance(tpe, str) else tpe.__name__
         tb_message = styles['backtrace'].format('Traceback ({0}):'.format(
-            'Most recent call ' + ('first' if reverse else 'last'))) + Style.RESET_ALL
-        err_message = styles['error'].format(tpe + ': ' + str(value)) + Style.RESET_ALL
+            'Most recent call ' + ('first' if reverse else 'last'))) + \
+            Style.RESET_ALL
+        err_message = styles['error'].format(tpe + ': ' + str(value)) + \
+            Style.RESET_ALL
 
         if reverse:
             parser.reverse()
