@@ -269,7 +269,11 @@ def _stdin_hook(args):
 
     tb, all_else = _extract_traceback(output)
     sys.stdout.write(''.join(all_else))
-    tpe, value = output[-1].strip('\n').split(': ', 1)
+    try:
+        tpe, value = output[-1].strip('\n').split(': ', 1)
+    except ValueError:
+        tpe = output[-1].strip('\n')
+        value = ""
     hook(
         reverse=args.reverse,
         align=args.align,
