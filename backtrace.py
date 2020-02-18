@@ -243,7 +243,7 @@ def _extract_traceback(text):
             entries.append(line)
             break
         else:
-            # Add everything else after the traceback.
+            # Add everything else before the traceback.
             all_else.append(line)
 
     traceback_entries = []
