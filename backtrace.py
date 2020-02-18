@@ -231,7 +231,7 @@ def _extract_traceback(text):
         elif capture and line.startswith(' '):
             if location_info:
                 # Line containing a file, line and module.
-                line = line.strip().strip('\n')
+                line = line.strip()
                 entries.append(line)
             else:
                 # The corresponding line of source code.
